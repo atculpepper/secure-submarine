@@ -7,8 +7,9 @@ const {
 
 router.get("/", rejectUnauthenticated, (req, res) => {
   console.log("req.user:", req.user);
+  const queryText = `SELECT * FROM "secret" WHERE "access_level" <= $1;`;
   pool
-    .query('SELECT * FROM "secret";')
+    .query(queryText, [req.user.access_level])
     .then((results) => res.send(results.rows))
     .catch((error) => {
       console.log("Error making SELECT for secrets:", error);
